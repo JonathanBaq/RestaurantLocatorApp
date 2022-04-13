@@ -7,19 +7,16 @@ const getCoordinates = async (location) => {
     const response = await fetch(url);
     const data = await response.json();
     const coordinates = await data.results[0].geometry.location;
-    return {
-      latitude: coordinates.lat,
-      longitude: coordinates.lng
-    }
+    return coordinates;
   } catch (error) {
     console.log(error);
     Alert.alert('Error', 'Something went wrong in fetch.');
   }
 }
 
-const getRestaurants = async (coordinates) => {
+const getRestaurant = async (restaurantName) => {
   try {
-    const url = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=restaurants&inputtype=textquery&locationbias=circle%3A1000%${coordinates.latitude}%2C${coordinates.longitude}&fields=formatted_address%2Cname%2Crating%2Copening_hours&key=${API_KEY}`;
+    const url = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${restaurantName}&inputtype=textquery&fields=formatted_address%2Cname%2Crating%2Copening_hours&key=${API_KEY}`;
     const response = await fetch(url);
     const data = await response.json();
     return data.candidates;
@@ -41,4 +38,4 @@ const getNearbyRestaurants = async (coordinates) => {
   }
 }
 
-export default { getCoordinates, getRestaurants, getNearbyRestaurants };
+export default { getCoordinates, getRestaurant, getNearbyRestaurants };

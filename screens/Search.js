@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, TextInput, Button, Alert } from 'react-native';
+import { View, StyleSheet, TextInput, Button, Alert } from 'react-native';
 import MapView from 'react-native-maps';
 import * as Location from 'expo-location';
 
@@ -45,7 +45,7 @@ export default function Search() {
   }
 
   return (
-    <>
+    <View style={styles.container}>
       <MapView
         style={{ flex: 1 }}
         region={{
@@ -65,12 +65,12 @@ export default function Search() {
         }
       </MapView>
       <TextInput
-        placeholder='Enter address to find restaurant.'
+        placeholder='Enter address to find nearby restuarants.'
         onChangeText={address => setAddress(address)} />
       <Button
         title='Show'
         onPress={findAddress} />
-    </>
+    </View >
   );
 }
 
@@ -78,5 +78,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    marginHorizontal: 16,
   },
 })

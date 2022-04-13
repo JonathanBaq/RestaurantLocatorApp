@@ -38,7 +38,7 @@ export default function Search() {
         const nearbyRestaurants = await placesService.getNearbyRestaurants(address);
         setNearbyRestaurants(nearbyRestaurants);
       } catch (error) {
-        console.log(error);
+        console.error(error);
         Alert.alert('Error', 'Please enter a valid address.')
       }
     }

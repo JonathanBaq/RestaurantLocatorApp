@@ -9,8 +9,8 @@ export default function Search() {
   const [location, setLocation] = useState({
     latitude: 60.1699,
     longitude: 24.9384,
-    latitudeDelta: 0.015,
-    longitudeDelta: 0.015
+    latitudeDelta: 0.020,
+    longitudeDelta: 0.020
   });
   const [address, setAddress] = useState('');
   const [nearbyRestaurants, setNearbyRestaurants] = useState([]);
@@ -30,13 +30,26 @@ export default function Search() {
     })();
   }, []);
 
+  useEffect(async () => {
+    try {
+      const nearbyRestaurants = await placesService.getNearbyRestaurants(location);
+      setNearbyRestaurants(nearbyRestaurants);
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'Please enter a valid address.')
+    }
+  }, [location])
+
   const findAddress = async () => {
     if (!address || address === '') {
       Alert.alert('Error', 'Address missing');
     } else {
       try {
-        const nearbyRestaurants = await placesService.getNearbyRestaurants(address);
-        setNearbyRestaurants(nearbyRestaurants);
+        const coordinates = await placesService.getCoordinates(address);
+        setLocation({
+          latitude: coordinates.lat,
+          longitude: coordinates.lng
+        });
       } catch (error) {
         console.error(error);
         Alert.alert('Error', 'Please enter a valid address.')

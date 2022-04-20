@@ -1,40 +1,78 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, Alert, Button, TextInput } from 'react-native';
+import { StyleSheet, View, Text, Alert } from 'react-native';
 import { Dialog, Input } from '@rneui/themed';
 import { MaterialIcons } from '@expo/vector-icons';
 import { DialogActions } from '@rneui/base/dist/Dialog/Dialog.Actions';
 
 import placesService from '../services/placesService';
+import RestaurantList from '../Components/RestaurantList';
 
 export default function Home() {
-  const [location, setLocation] = useState('');
-  const [restaurantName, setRestaurantName] = useState('');
+  const [location, setLocation] = useState('Kallio');
   const [locationDialogVisible, setLocationDialogVisible] = useState(false);
   const [restaurant, setRestaurant] = useState({});
-  const [nearbyRestaurants, setNearbyRestaurants] = useState([]);
-
-  const showRestaurant = () => {
-    if (!restaurantName || restaurantName === '') {
-      Alert.alert('Error', 'Restaurant name missing.')
-    } else {
-      placesService.getRestaurant(restaurantName)
-        .then(data => {
-          if (data && data.length !== 0) {
-            const foundRestaurant = data[0];
-            setRestaurant({ ...restaurant, ...foundRestaurant });
-            setRestaurant(state => {
-              console.log(state);
-            });
-          } else {
-            Alert.alert('Not found!', 'Try entering a more specific name.')
-          }
-        })
-        .catch(error => {
-          console.error(error);
-          Alert.alert('Error', 'Please enter a valid name.');
-        })
-    }
-  }
+  const [nearbyRestaurants, setNearbyRestaurants] = useState([
+    {
+      "address": "Hämeentie 2, Helsinki",
+      "name": "Kallion Sävel",
+      "priceLevel": 2,
+      "rating": 4,
+    },
+    {
+      "address": "Siltasaarenkatu 3, Helsinki",
+      "name": "Restaurant Himshikhar",
+      "priceLevel": 2,
+      "rating": 4.2,
+    },
+    {
+      "address": "Porthaninkatu 5 A 3, Helsinki",
+      "name": "Restaurant Oiva",
+      "priceLevel": 2,
+      "rating": 4,
+    },
+    {
+      "address": "Säästöpankinranta 6, Helsinki",
+      "name": "Juttutupa",
+      "priceLevel": 2,
+      "rating": 4.1,
+    },
+    {
+      "address": "Siltasaarenkatu 12, Helsinki",
+      "name": "McDonald's",
+      "priceLevel": 1,
+      "rating": 3.5,
+    },
+    {
+      "address": "John Stenbergin ranta 2, Helsinki",
+      "name": "Food & Co John S",
+      "priceLevel": 1,
+      "rating": 4.4,
+    },
+    {
+      "address": "Hämeentie 2, Helsinki",
+      "name": "Hesburger Hakaniemi",
+      "priceLevel": 2,
+      "rating": 3.8,
+    },
+    {
+      "address": "Siltasaarenkatu 11, Helsinki",
+      "name": "Da Vinci Bar & Ristorante",
+      "priceLevel": 2,
+      "rating": 4,
+    },
+    {
+      "address": "Siltasaarenkatu 11, Helsinki",
+      "name": "Chilli Hakaniemi",
+      "priceLevel": 1,
+      "rating": 3.6,
+    },
+    {
+      "address": "Toinen linja 3, Helsinki",
+      "name": "Silvoplee",
+      "priceLevel": 2,
+      "rating": 4.4,
+    },
+  ]);
 
   const findLocation = () => {
     if (!location || location === '') {
@@ -69,7 +107,7 @@ export default function Home() {
               rating: resto.rating,
               priceLevel: resto.price_level,
               address: resto.vicinity,
-              icon: resto.icon
+              photo: resto.photos[0].photo_reference,
             }))
             setNearbyRestaurants(nearbyRestaurants.concat(formatted));
             setNearbyRestaurants(state => {
@@ -91,7 +129,8 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      <Text>Home Page</Text>
+      <Text style={styles.title}>{location}</Text>
+      <RestaurantList nearbyRestaurants={nearbyRestaurants} />
       <Dialog
         isVisible={locationDialogVisible}>
         <Dialog.Title title='Welcome to eatWithMe!' />
@@ -106,20 +145,11 @@ export default function Home() {
             onPress={findLocation} />
         </DialogActions>
       </Dialog>
-      <Button
+      {/*  <Button
         style={{}}
         title='Enter location'
-        onPress={() => setLocationDialogVisible(!locationDialogVisible)} />
-      <View style={styles.buttonContainer}>
-        <TextInput
-          style={{ paddingRight: 20 }}
-          placeholder='Enter restaurant name or cuisine'
-          onChangeText={(text) => setRestaurantName(text)} />
-        <Button
-          style={{}}
-          title='Find'
-          onPress={showRestaurant} />
-      </View>
+        onPress={() => setLocationDialogVisible(!locationDialogVisible)} /> */}
+     
     </View >
   );
 }
@@ -130,10 +160,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginHorizontal: 16,
   },
-  buttonContainer: {
-    flex: 1 / 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+  title: {
+    fontSize: 30,
   },
 })

@@ -4,10 +4,10 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-import Home from './screens/Home';
-import Search from './screens/Search';
-import Favourites from './screens/Favourites';
-import Invitations from './screens/Invitations';
+import Home from './Screens/Home';
+import Search from './Screens/Search';
+import Favourites from './Screens/Favourites';
+import Invitations from './Screens/Invitations';
 
 const Tab = createBottomTabNavigator();
 

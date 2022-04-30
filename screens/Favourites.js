@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Button, TextInput } from 'react-native';
+import { StyleSheet, View, Button, TextInput, Alert } from 'react-native';
+
+import placesService from '../Services/placesService';
+import firebaseService from '../Services/firebaseService';
 
 export default function Favourites() {
   const [restaurantName, setRestaurantName] = useState('');
+  const [restaurant, setRestaurant] = useState({});
 
   const showRestaurant = () => {
     if (!restaurantName || restaurantName === '') {
@@ -10,8 +14,8 @@ export default function Favourites() {
     } else {
       placesService.getRestaurant(restaurantName)
         .then(data => {
-          if (data && data.length !== 0) {
-            const foundRestaurant = data[0];
+          if (data) {
+            const foundRestaurant = data;
             setRestaurant({ ...restaurant, ...foundRestaurant });
             setRestaurant(state => {
               console.log(state);
@@ -21,7 +25,7 @@ export default function Favourites() {
           }
         })
         .catch(error => {
-          console.error(error);
+          console.log(error);
           Alert.alert('Error', 'Please enter a valid name.');
         })
     }
@@ -39,6 +43,10 @@ export default function Favourites() {
           title='Find'
           onPress={showRestaurant} />
       </View>
+      <Button
+        style={{}}
+        title='getUserId'
+        onPress={() => firebaseService.getFavorites()} />
     </View >
   )
 }

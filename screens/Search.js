@@ -3,7 +3,7 @@ import { View, StyleSheet, TextInput, Button, Alert } from 'react-native';
 import MapView from 'react-native-maps';
 import * as Location from 'expo-location';
 
-import placesService from '../services/placesService';
+import placesService from '../Services/placesService';
 
 export default function Search() {
   const [location, setLocation] = useState({

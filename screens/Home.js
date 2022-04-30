@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, Alert } from 'react-native';
+import { StyleSheet, View, Text, Alert, Button } from 'react-native';
 import { Dialog, Input } from '@rneui/themed';
 import { MaterialIcons } from '@expo/vector-icons';
 import { DialogActions } from '@rneui/base/dist/Dialog/Dialog.Actions';
 
-import placesService from '../services/placesService';
+import placesService from '../Services/placesService';
 import RestaurantList from '../Components/RestaurantList';
 
 export default function Home() {
   const [location, setLocation] = useState('Kallio');
   const [locationDialogVisible, setLocationDialogVisible] = useState(false);
-  const [restaurant, setRestaurant] = useState({});
   const [nearbyRestaurants, setNearbyRestaurants] = useState([
     {
       "address": "Hämeentie 2, Helsinki",
@@ -107,7 +106,6 @@ export default function Home() {
               rating: resto.rating,
               priceLevel: resto.price_level,
               address: resto.vicinity,
-              photo: resto.photos[0].photo_reference,
             }))
             setNearbyRestaurants(nearbyRestaurants.concat(formatted));
             setNearbyRestaurants(state => {
@@ -145,11 +143,10 @@ export default function Home() {
             onPress={findLocation} />
         </DialogActions>
       </Dialog>
-      {/*  <Button
+      {/*   <Button
         style={{}}
         title='Enter location'
         onPress={() => setLocationDialogVisible(!locationDialogVisible)} /> */}
-     
     </View >
   );
 }

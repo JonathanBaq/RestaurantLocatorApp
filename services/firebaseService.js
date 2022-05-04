@@ -1,5 +1,6 @@
-import { firebaseDb } from '../Database/firebase';
 import { child, get } from "firebase/database";
+
+import { firebaseDb } from '../Database/firebase';
 
 const db = firebaseDb;
 
@@ -7,6 +8,17 @@ const db = firebaseDb;
 
   const reference = ref(db, `favorites/${userId}`)
 } */
+
+const snapshotToArray = (snapshot) => {
+  let returnArr = [];
+  snapshot.forEach((childSnapshot) => {
+    const item = childSnapshot.val();
+    item.key = childSnapshot.key;
+
+    returnArr.push(item);
+  })
+  return returnArr;
+}
 
 const getUsers = () => {
   try {
@@ -29,7 +41,8 @@ const getFavorites = () => {
   try {
     get(child(db, 'favorites/')).then((snapshot) => {
       if (snapshot.exists()) {
-        console.log(snapshot.val());
+        const data = snapshotToArray(snapshot);
+        return data;
       } else {
         console.log("No data available");
       }

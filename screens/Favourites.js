@@ -1,12 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Button, TextInput, Alert } from 'react-native';
 
 import placesService from '../Services/placesService';
 import firebaseService from '../Services/firebaseService';
+import RestaurantList from '../Components/RestaurantList';
 
 export default function Favourites() {
   const [restaurantName, setRestaurantName] = useState('');
   const [restaurant, setRestaurant] = useState({});
+  const [favoriteList, setFavoriteList] = useState([]);
+
+  useEffect(() => {
+    console.log(favoriteList);
+  }, [favoriteList]);
+
+  const fetchFavorites = () => {
+    try {
+      const favorites = firebaseService.getFavorites();
+      setFavoriteList(favorites);
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   const showRestaurant = () => {
     if (!restaurantName || restaurantName === '') {
@@ -45,8 +60,9 @@ export default function Favourites() {
       </View>
       <Button
         style={{}}
-        title='getUserId'
-        onPress={() => firebaseService.getFavorites()} />
+        title='getFavorites'
+        onPress={fetchFavorites} />
+      <RestaurantList restaurantList={favoriteList} />
     </View >
   )
 }

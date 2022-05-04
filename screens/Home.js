@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, Alert, Button } from 'react-native';
-import { Dialog, Input } from '@rneui/themed';
+import { StyleSheet, View, Text, Alert } from 'react-native';
+import { Dialog, Input, Button } from '@rneui/themed';
 import { MaterialIcons } from '@expo/vector-icons';
 import { DialogActions } from '@rneui/base/dist/Dialog/Dialog.Actions';
 
@@ -8,9 +8,10 @@ import placesService from '../Services/placesService';
 import RestaurantList from '../Components/RestaurantList';
 
 export default function Home() {
-  const [location, setLocation] = useState('Kallio');
+  const [location, setLocation] = useState('kallio');
   const [locationDialogVisible, setLocationDialogVisible] = useState(false);
   const [nearbyRestaurants, setNearbyRestaurants] = useState([
+
     {
       "address": "Hämeentie 2, Helsinki",
       "name": "Kallion Sävel",
@@ -71,7 +72,23 @@ export default function Home() {
       "priceLevel": 2,
       "rating": 4.4,
     },
+
   ]);
+  const [coordinates, setCoordinates] = useState({});
+
+  /* useEffect(() => {
+    if (!location) {
+      toggleDialog();
+    }
+  }, [])
+
+  useEffect(() => {
+    showNearbyRestaurants(coordinates);
+  }, [coordinates]) */
+
+  const toggleDialog = () => {
+    setLocationDialogVisible(!locationDialogVisible);
+  }
 
   const findLocation = () => {
     if (!location || location === '') {
@@ -83,7 +100,8 @@ export default function Home() {
             latitude: data.lat,
             longitude: data.lng
           };
-          showNearbyRestaurants(coordinates);
+          setCoordinates(coordinates);
+          toggleDialog();
         })
         .catch(error => {
           console.error(error);
@@ -93,60 +111,52 @@ export default function Home() {
   };
 
   const showNearbyRestaurants = (coordinates) => {
-    if (!coordinates || Object.keys(coordinates).length === 0
-      && Object.getPrototypeOf(coordinates) === Object.prototype) {
-      Alert.alert('Error', 'Coordinates not found.');
-    } else {
-      placesService.getNearbyRestaurants(coordinates)
-        .then(data => {
-          if (data && data.length !== 0) {
-            const recommended = data.slice(0, 10);
-            const formatted = recommended.map(resto => ({
-              name: resto.name,
-              rating: resto.rating,
-              priceLevel: resto.price_level,
-              address: resto.vicinity,
-            }))
-            setNearbyRestaurants(nearbyRestaurants.concat(formatted));
-            setNearbyRestaurants(state => {
-              console.log(state);
-            })
-            setLocationDialogVisible(!locationDialogVisible);
-
-          } else {
-            Alert.alert('Not found!', 'Restaurants not found, please try again.');
-            setLocationDialogVisible(!locationDialogVisible);
-          }
-        })
-        .catch(error => {
-          console.error(error);
-          Alert.alert('Error', 'Could not find nearby restaurants, please try again.')
-        })
-    }
+    placesService.getNearbyRestaurants(coordinates)
+      .then(data => {
+        const recommended = data.slice(0, 10);
+        const formatted = recommended.map(resto => ({
+          name: resto.name,
+          rating: resto.rating,
+          priceLevel: resto.price_level,
+          address: resto.vicinity,
+        }))
+        setNearbyRestaurants(nearbyRestaurants.concat(formatted));
+      })
+      .catch(error => {
+        console.error(error);
+        Alert.alert('Error', 'Could not find nearby restaurants, please try again.')
+      })
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{location}</Text>
-      <RestaurantList nearbyRestaurants={nearbyRestaurants} />
-      <Dialog
-        isVisible={locationDialogVisible}>
-        <Dialog.Title title='Welcome to eatWithMe!' />
+      <View style={styles.searchContainer}>
+        <Text style={styles.title}>{location}</Text>
+        {location
+          ? <Button
+            buttonStyle={styles.buttonStyle}
+            title='Change location'
+            onPress={toggleDialog} />
+          : <Text></Text>}
+
+      </View>
+      <RestaurantList restaurantList={nearbyRestaurants} />
+      <Dialog isVisible={locationDialogVisible}>
+        <Dialog.Title
+          title='Welcome to EatwithMe!'
+          titleStyle={styles.dialogText} />
         <Input
-          placeholder='Start by entering your location'
+          label='Start by entering your location'
           leftIcon={
             <MaterialIcons name='my-location' size={24} />}
           onChangeText={text => setLocation(text)} />
         <DialogActions>
-          <Dialog.Button
+          <Button
+            buttonStyle={styles.buttonStyle}
             title='Enter'
             onPress={findLocation} />
         </DialogActions>
       </Dialog>
-      {/*   <Button
-        style={{}}
-        title='Enter location'
-        onPress={() => setLocationDialogVisible(!locationDialogVisible)} /> */}
     </View >
   );
 }
@@ -159,5 +169,17 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 30,
+    color: '#fdbf50'
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 10,
+  },
+  buttonStyle: {
+    backgroundColor: '#ff724c',
+  },
+  dialogText: {
+    color: '#fdbf50',
   },
 })

@@ -39,7 +39,7 @@ const getUsers = () => {
 
 const getFavorites = () => {
   try {
-    get(child(db, 'favorites/')).then((snapshot) => {
+    return get(child(db, 'favorites/')).then((snapshot) => {
       if (snapshot.exists()) {
         const data = snapshotToArray(snapshot);
         return data;

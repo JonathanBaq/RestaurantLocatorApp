@@ -16,8 +16,15 @@ export default function Favourites() {
 
   const fetchFavorites = () => {
     try {
-      const favorites = firebaseService.getFavorites();
-      setFavoriteList(favorites);
+      firebaseService.getFavorites().then(favorites => {
+      const newFavorite = [{
+        address: favorites[0].one.address,
+        name: favorites[0].one.name,
+        priceLevel: favorites[0].one.priceLevel,
+        rating: favorites[0].one.rating,
+      }]
+      setFavoriteList(...favoriteList, newFavorite);
+      });
     } catch (error) {
       console.error(error)
     }

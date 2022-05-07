@@ -1,58 +1,69 @@
-import { child, get } from "firebase/database";
+import { child, get, push, ref, update } from "firebase/database";
 
-import { firebaseDb } from '../Database/firebase';
+import { firebaseDbRef, firebaseDb } from '../Database/firebase';
 
-const db = firebaseDb;
+const dbRef = firebaseDbRef;
 
-/* const addToFavorites = (address, name, priceLevel, rating) => {
-
-  const reference = ref(db, `favorites/${userId}`)
-} */
+const addToFavorites = async (item) => {
+  if(!item) {
+    console.error('Item data missing!');
+  } else {
+    const favoriteData = {
+      address: item.address,
+      name: item.name,
+      priceLevel: item.priceLevel,
+      rating: item.rating,
+    };
+    const favoriteDbRef = ref(firebaseDb, `favorites/testUser`);
+    const newFavoriteRef = push(favoriteDbRef);
+    try {
+      await update(newFavoriteRef, favoriteData);
+      console.log('Saved to DB successfully.');
+    } catch (error) {
+      console.log(error);
+    }
+  }
+}
 
 const snapshotToArray = (snapshot) => {
-  let returnArr = [];
-  snapshot.forEach((childSnapshot) => {
-    const item = childSnapshot.val();
-    item.key = childSnapshot.key;
-
-    returnArr.push(item);
-  })
-  return returnArr;
-}
-
-const getUsers = () => {
-  try {
-    get(child(db, 'users/')).then((snapshot) => {
-      if (snapshot.exists()) {
-        console.log(snapshot.val());
-      } else {
-        console.log("No data available");
-      }
-    }).catch((error) => {
-      console.error(error);
-    });
-  } catch (error) {
-    console.error(error);
-    console.log('Could not connect to Database.');
+  if(!snapshot) {
+    console.error('Snapshot missing!');
+  } else {
+    let returnArr = [];
+    snapshot.forEach((childSnapshot) => {
+      const item = childSnapshot.val();
+      item.key = childSnapshot.key;
+      returnArr.push(item);
+    })
+    return returnArr;
   }
 }
 
-const getFavorites = () => {
+const getUsers = async () => {
+ const snapshot = await get(child(dbRef, 'users/'));
+ try {
+  if (snapshot.exists()) {
+    console.log(snapshot.val());
+  } else {
+    console.log("No data available");
+  }
+ } catch (error) {
+  console.error(error);
+ } 
+}
+
+const getFavorites = async () => {
+  const snapshot = await get(child(dbRef, 'favorites/testUser'));
   try {
-    return get(child(db, 'favorites/')).then((snapshot) => {
-      if (snapshot.exists()) {
-        const data = snapshotToArray(snapshot);
-        return data;
-      } else {
-        console.log("No data available");
-      }
-    }).catch((error) => {
-      console.error(error);
-    });
+    if (snapshot.exists()) {
+      const data = snapshotToArray(snapshot);
+      return data;
+    } else {
+      console.log("No data available");
+    }
   } catch (error) {
     console.error(error);
-    console.log('Could not connect to Database.');
   }
 }
 
-export default { getUsers, getFavorites };
+export default { getUsers, getFavorites, addToFavorites };

@@ -3,13 +3,14 @@ import { FlatList, StyleSheet, View } from 'react-native';
 
 import Restaurant from './Restaurant';
 
-export default function RestaurantList({ restaurantList }) {
+export default function RestaurantList({ restaurantList, showFavoriteIcon }) {
   const [selectedId, setSelectedId] = useState(null);
 
   const renderItem = ({ item }) => {
     return (
       <View style={styles.item}>
         <Restaurant
+          showFavoriteIcon={showFavoriteIcon}
           item={item}
           onPress={() => setSelectedId(item.name)}
         />

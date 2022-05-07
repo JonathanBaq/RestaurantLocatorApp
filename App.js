@@ -1,8 +1,7 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { MaterialIcons } from '@expo/vector-icons';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 import Home from './Screens/Home';
 import Search from './Screens/Search';
@@ -23,7 +22,7 @@ export default function App() {
               iconName = focused
                 ? 'home-filled'
                 : 'home';
-            } else if (route.name === 'Search') {
+            } else if (route.name === 'Map') {
               iconName = focused
                 ? 'map-search'
                 : 'map-search-outline'
@@ -41,10 +40,12 @@ export default function App() {
             return <MaterialIcons name={iconName} size={size} color={color} />;
           },
           tabBarActiveTintColor: '#ff724c',
+          tabBarLabel: () => {return null},
+          headerTintColor: '#ff724c'
         })}
       >
         <Tab.Screen name='Home' component={Home} />
-        <Tab.Screen name='Search' component={Search} />
+        <Tab.Screen name='Map' component={Search} />
         <Tab.Screen name='Favourites' component={Favourites} />
         <Tab.Screen name='Invitations' component={Invitations} />
       </Tab.Navigator>

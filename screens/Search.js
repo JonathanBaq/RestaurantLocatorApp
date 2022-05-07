@@ -15,7 +15,7 @@ export default function Search() {
   const [address, setAddress] = useState('');
   const [nearbyRestaurants, setNearbyRestaurants] = useState([]);
 
-  useEffect(async () => {
+  useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {

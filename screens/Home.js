@@ -140,8 +140,10 @@ export default function Home() {
           : <Text></Text>}
 
       </View>
-      <RestaurantList restaurantList={nearbyRestaurants} />
-      <Dialog isVisible={locationDialogVisible}>
+      <RestaurantList showFavoriteIcon={true} restaurantList={nearbyRestaurants} />
+      <Dialog 
+        isVisible={locationDialogVisible}
+        onBackdropPress={toggleDialog} >
         <Dialog.Title
           title='Welcome to EatwithMe!'
           titleStyle={styles.dialogText} />
@@ -169,7 +171,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 30,
-    color: '#fdbf50'
+    color: '#fdbf50',
   },
   searchContainer: {
     flexDirection: 'row',

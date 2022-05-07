@@ -1,38 +1,30 @@
 import React, { useState } from 'react';
-import { ListItem, Dialog } from '@rneui/themed'
-import { Rating } from 'react-native-ratings'
-import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
+import { ListItem } from '@rneui/themed';
+import { TouchableOpacity, StyleSheet, View, Alert } from 'react-native';
 
-const CustomRating = ({ item }) => {
-  return (
-    <Rating
-      type='custom'
-      ratingColor={'#ff724c'}
-      readonly={true}
-      imageSize={20}
-      startingValue={item.rating}
-    />
-  )
-}
 
-export default Restaurant = ({ item, onPress }) => {
+import firebaseService from '../Services/firebaseService';
+import CustomRating from './CustomRating';
+import RestaurantDialog from './RestaurantDialog';
+
+
+export default Restaurant = ({ item, showFavoriteIcon }) => {
   const [restaurantDialogVisible, setRestaurantDialogVisible] = useState(false);
+  const [favoriteIconName, setFavoriteIconName] = useState('heart-outline');
 
   const toggleDialog = () => {
     setRestaurantDialogVisible(!restaurantDialogVisible);
   }
 
-  let priceDesc;
-  let priceStyle = styles.itemStyle;
-  if (item.priceLevel === 1) {
-    priceDesc = 'Cheap';
-    priceStyle = { ...priceStyle, color: 'black', };
-  } else if (item.priceLevel > 3) {
-    priceDesc = 'Pricey'
-    priceStyle = { ...priceStyle, color: 'yellow', };
-  } else {
-    priceDesc = 'Affordable'
-    priceStyle = { ...priceStyle, color: 'green', };
+  const saveToFavorites = () => {
+    firebaseService.addToFavorites(item)
+      .then(() => {
+        setFavoriteIconName('heart');
+      })
+      .catch((error) => {
+        console.error(error);
+        Alert.alert('Error', 'Something went wrong, try again later.');
+      })
   }
 
   return (
@@ -46,17 +38,14 @@ export default Restaurant = ({ item, onPress }) => {
           <ListItem.Chevron color="black" onPress={toggleDialog} />
         </ListItem>
       </TouchableOpacity>
-      <Dialog
-        onBackdropPress={toggleDialog}
-        isVisible={restaurantDialogVisible}
-        overlayStyle={styles.dialog}>
-        <Dialog.Title
-          title={item.name}
-          titleStyle={styles.dialogTitle} />
-        <CustomRating item={item} />
-        <Text style={priceStyle}>Price level: {priceDesc}</Text>
-        <Text style={styles.itemStyle}>{item.address}</Text>
-      </Dialog>
+      <RestaurantDialog 
+        item={item}
+        saveToFavorites={saveToFavorites}
+        favoriteIconName={favoriteIconName}
+        toggleDialog={toggleDialog}
+        restaurantDialogVisible={restaurantDialogVisible}
+        showFavoriteIcon={showFavoriteIcon}
+      />
     </View>
   )
 }
@@ -76,5 +65,8 @@ const styles = StyleSheet.create({
   itemStyle: {
     alignSelf: 'center',
     fontSize: 20,
+  },
+  iconStyle: {
+    alignSelf: 'center',
   },
 });

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, Alert } from 'react-native';
-import { Dialog, Input, Button } from '@rneui/themed';
+import { Dialog, Input, Button, Divider } from '@rneui/themed';
 import { MaterialIcons } from '@expo/vector-icons';
 import { DialogActions } from '@rneui/base/dist/Dialog/Dialog.Actions';
 
@@ -120,7 +120,7 @@ export default function Home() {
           priceLevel: resto.price_level,
           address: resto.vicinity,
         }))
-        setNearbyRestaurants(nearbyRestaurants.concat(formatted));
+        setNearbyRestaurants(...nearbyRestaurants, formatted);
       })
       .catch(error => {
         console.error(error);
@@ -140,8 +140,9 @@ export default function Home() {
           : <Text></Text>}
 
       </View>
+      <Divider />
       <RestaurantList showFavoriteIcon={true} restaurantList={nearbyRestaurants} />
-      <Dialog 
+      <Dialog
         isVisible={locationDialogVisible}
         onBackdropPress={toggleDialog} >
         <Dialog.Title
@@ -177,6 +178,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     padding: 10,
+    paddingBottom: 10,
   },
   buttonStyle: {
     backgroundColor: '#ff724c',

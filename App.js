@@ -6,7 +6,6 @@ import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import Home from './Screens/Home';
 import Search from './Screens/Search';
 import Favourites from './Screens/Favourites';
-import Invitations from './Screens/Invitations';
 
 const Tab = createBottomTabNavigator();
 
@@ -31,11 +30,7 @@ export default function App() {
               iconName = focused
                 ? 'favorite'
                 : 'favorite-outline';
-            } else if (route.name === 'Invitations') {
-              iconName = focused
-                ? 'insert-invitation'
-                : 'restaurant';
-            }
+            } 
 
             return <MaterialIcons name={iconName} size={size} color={color} />;
           },
@@ -47,7 +42,6 @@ export default function App() {
         <Tab.Screen name='Home' component={Home} />
         <Tab.Screen name='Map' component={Search} />
         <Tab.Screen name='Favourites' component={Favourites} />
-        <Tab.Screen name='Invitations' component={Invitations} />
       </Tab.Navigator>
     </NavigationContainer>
   );

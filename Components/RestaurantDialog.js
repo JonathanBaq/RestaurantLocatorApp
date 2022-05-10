@@ -1,5 +1,5 @@
 import { Dialog } from '@rneui/themed';
-import { Text, View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet, Linking } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import CustomRating from './CustomRating';
@@ -7,7 +7,7 @@ import CustomRating from './CustomRating';
 export default RestaurantDialog = (
   { item, saveToFavorites, favoriteIconName,
     toggleDialog, restaurantDialogVisible, showFavoriteIcon }) => {
-      
+
   let priceDesc;
   let priceStyle = styles.itemStyle;
   if (item.priceLevel === 1) {
@@ -34,7 +34,10 @@ export default RestaurantDialog = (
         <CustomRating item={item} />
         <Text style={priceStyle}>Price level: {priceDesc}</Text>
         <Text style={styles.itemStyle}>{item.address}</Text>
-        {showFavoriteIcon
+        <Text
+          style={styles.link}
+          onPress={() => Linking.openURL(item.website)}>{item.website}</Text>
+        {showFavoriteIcon 
           ? <MaterialCommunityIcons
             onPress={saveToFavorites}
             style={styles.iconStyle}
@@ -49,7 +52,7 @@ export default RestaurantDialog = (
 
 const styles = StyleSheet.create({
   dialog: {
-    flex: 0.3,
+    flex: 0.4,
     justifyContent: 'space-evenly',
   },
   dialogTitle: {
@@ -59,8 +62,15 @@ const styles = StyleSheet.create({
   itemStyle: {
     alignSelf: 'center',
     fontSize: 20,
+    alignItems: 'center',
   },
   iconStyle: {
     alignSelf: 'center',
+  },
+  link: {
+    color: 'blue',
+    alignSelf: 'center',
+    fontSize: 20,
+    paddingBottom: 15,
   },
 });

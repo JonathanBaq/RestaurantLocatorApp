@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet, View, TextInput, Alert } from 'react-native';
-import { Button } from '@rneui/themed';
+import { StyleSheet, View, TextInput, Alert, Text } from 'react-native';
+import { Button, Divider } from '@rneui/themed';
 
 import placesService from '../Services/placesService';
 import firebaseService from '../Services/firebaseService';
 import RestaurantList from '../Components/RestaurantList';
-import RestaurantDialog from '../Components/RestaurantDialog';
 
 export default function Favourites() {
   const [favoriteList, setFavoriteList] = useState([]);
   const [restaurantName, setRestaurantName] = useState('');
-  const [restaurant, setRestaurant] = useState({});
+  const [restaurant, setRestaurant] = useState([]);
+  const [resultIsVisible, setResultIsVisible] = useState(false);
 
-  useEffect(() => {
-    //console.log(favoriteList);
-  }, [favoriteList]);
+  /*    useEffect(() => {
+     fetchFavorites();
+    }, []); */
 
   const fetchFavorites = () => {
     firebaseService.getFavorites()
@@ -34,11 +34,16 @@ export default function Favourites() {
       placesService.getRestaurant(restaurantName)
         .then(data => {
           if (data) {
-            const foundRestaurant = data;
-            setRestaurant({ ...restaurant, ...foundRestaurant });
-            setRestaurant(state => {
-              console.log(state);
-            });
+            const results = [{
+              name: data.name,
+              rating: data.rating,
+              priceLevel: data.price_level,
+              address: data.formatted_address,
+              website: data.website,
+            }];
+            setRestaurant(results);
+            setResultIsVisible(true);
+            setRestaurantName('');
           } else {
             Alert.alert('Not found!', 'Try entering a more specific name.')
           }
@@ -50,36 +55,36 @@ export default function Favourites() {
     }
   }
 
+
   return (
-    <KeyboardAvoidingView behavior={"height"}>
-      <View>
-        <View style={styles.buttonContainer}>
-          <TextInput
-            style={{ paddingRight: 10 }}
-            placeholder='Enter restaurant name or cuisine'
-            onChangeText={(text) => setRestaurantName(text)} />
-          <Button
-            buttonStyle={styles.buttonStyle}
-            title='Search'
-            onPress={showRestaurant} />
-        </View>
-        <View>
-          {/* <RestaurantDialog 
-        item={item}
-        saveToFavorites={saveToFavorites}
-        favoriteIconName={favoriteIconName}
-        toggleDialog={toggleDialog}
-        restaurantDialogVisible={restaurantDialogVisible}
-        showFavoriteIcon={showFavoriteIcon}
-      /> */}
-        </View>
+    <View style={styles.container}>
+      <View style={styles.searchContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder='Enter restaurant name or cuisine'
+          onChangeText={(text) => setRestaurantName(text)}
+          value={restaurantName} />
         <Button
-          style={{}}
-          title='Get Favorites'
-          onPress={fetchFavorites} />
-        <RestaurantList showFavoriteIcon={false} restaurantList={favoriteList} />
-      </View >
-    </KeyboardAvoidingView>
+          buttonStyle={styles.buttonStyle}
+          title='Search'
+          onPress={showRestaurant} />
+      </View>
+     {/*  <Button
+        style={{}}
+        title='Get Favorites'
+        onPress={fetchFavorites} /> */}
+      {resultIsVisible
+        ? <>
+          <Text style={styles.title}>Your Searches</Text>
+          <RestaurantList showFavoriteIcon={true} restaurantList={restaurant} />
+          <Divider />
+        </>
+        : <Text></Text>}
+      {favoriteList.length != 0
+      ? <RestaurantList showFavoriteIcon={false} restaurantList={favoriteList} />
+    : <Text style={styles.info}>No favorites yet.</Text>}
+      
+    </View >
   )
 }
 
@@ -89,14 +94,24 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginHorizontal: 16,
   },
-  buttonContainer: {
-    flex: 1 / 8,
+  searchContainer: {
+    padding: 5,
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
+    justifyContent: 'space-evenly',
   },
   buttonStyle: {
     backgroundColor: '#ff724c',
+  },
+  title: {
+    fontSize: 18,
+    color: '#fdbf50',
+  },
+  info: {
+    alignSelf: 'center',
+    color: '#fdbf50',
+    
+  },
+  input:{
+    paddingRight: 15,
   },
 })

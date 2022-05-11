@@ -6,12 +6,7 @@ import * as Location from 'expo-location';
 import placesService from '../Services/placesService';
 
 export default function Search() {
-  const [location, setLocation] = useState({
-    latitude: 60.1699,
-    longitude: 24.9384,
-    latitudeDelta: 0.020,
-    longitudeDelta: 0.020
-  });
+  const [location, setLocation] = useState({});
   const [address, setAddress] = useState('');
   const [nearbyRestaurants, setNearbyRestaurants] = useState([]);
 
@@ -67,14 +62,15 @@ export default function Search() {
           latitudeDelta: 0.015,
           longitudeDelta: 0.015
         }}>
-        {
-          nearbyRestaurants.map((marker, index) => (
-            <MapView.Marker
-              key={index}
-              coordinate={{ latitude: marker.geometry.location.lat, longitude: marker.geometry.location.lng }}
-              title={marker.name}
-              description={marker.vicinity} />
-          ))
+        {location
+        ? nearbyRestaurants.map((marker, index) => (
+          <MapView.Marker
+            key={index}
+            coordinate={{ latitude: marker.geometry.location.lat, longitude: marker.geometry.location.lng }}
+            title={marker.name}
+            description={marker.vicinity} />
+        ))
+        : <></>
         }
       </MapView>
       <TextInput

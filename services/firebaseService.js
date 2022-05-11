@@ -1,6 +1,6 @@
 import { child, get, push, ref, update } from "firebase/database";
 
-import { firebaseDbRef, firebaseDb } from '../Database/firebase';
+import { firebaseDbRef, firebaseDb } from '../Config/firebase';
 
 const dbRef = firebaseDbRef;
 

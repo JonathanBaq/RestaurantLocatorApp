@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref } from "firebase/database";
+import 'firebase/auth';
 
 import {
   FIREBASE_API_KEY,

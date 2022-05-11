@@ -3,9 +3,11 @@ import { StyleSheet, View, Text, Alert } from 'react-native';
 import { Dialog, Input, Button, Divider } from '@rneui/themed';
 import { MaterialIcons } from '@expo/vector-icons';
 import { DialogActions } from '@rneui/base/dist/Dialog/Dialog.Actions';
+import { getAuth, signOut } from 'firebase/auth';
 
 import placesService from '../Services/placesService';
 import RestaurantList from '../Components/RestaurantList';
+import { useAuthentication } from '../Services/authenticationService';
 
 export default function Home() {
   const [location, setLocation] = useState('kallio');
@@ -76,6 +78,9 @@ export default function Home() {
   ]);
   const [coordinates, setCoordinates] = useState({});
 
+  const { user } = useAuthentication();
+  const auth = getAuth();
+
   /* useEffect(() => {
     if (!location) {
       toggleDialog();
@@ -130,6 +135,11 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
+      <View style={styles.logout}>
+        <Text style={styles.logoutText}>Welcome {user?.email}!</Text>
+        <Button title="Sign Out" buttonStyle={styles.buttonStyle} onPress={() => signOut(auth)} />
+      </View>
+      <Divider />
       <View style={styles.searchContainer}>
         <Text style={styles.title}>{location}</Text>
         {location
@@ -176,7 +186,7 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     padding: 10,
     paddingBottom: 10,
   },
@@ -185,5 +195,14 @@ const styles = StyleSheet.create({
   },
   dialogText: {
     color: '#fdbf50',
+  },
+  logout: {
+    flexDirection: 'row',
+    padding: 10,
+    justifyContent: 'space-between',
+  },
+  logoutText: {
+    fontSize: 15,
+    color: '#2a2c41'
   },
 })

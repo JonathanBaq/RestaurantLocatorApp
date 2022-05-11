@@ -1,48 +1,14 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
+import './Config/firebase';
+import 'react-native-gesture-handler';
 
-import Home from './Screens/Home';
-import Search from './Screens/Search';
-import Favourites from './Screens/Favourites';
-
-const Tab = createBottomTabNavigator();
+import { ThemeProvider } from '@rneui/themed';
+import RootNavigation from './Navigation';
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
-
-            if (route.name === 'Home') {
-              iconName = focused
-                ? 'home-filled'
-                : 'home';
-            } else if (route.name === 'Map') {
-              iconName = focused
-                ? 'map-search'
-                : 'map-search-outline'
-              return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
-            } else if (route.name === 'Favourites') {
-              iconName = focused
-                ? 'favorite'
-                : 'favorite-outline';
-            } 
-
-            return <MaterialIcons name={iconName} size={size} color={color} />;
-          },
-          tabBarActiveTintColor: '#ff724c',
-          tabBarLabel: () => {return null},
-          headerTintColor: '#ff724c'
-        })}
-      >
-        <Tab.Screen name='Home' component={Home} />
-        <Tab.Screen name='Map' component={Search} />
-        <Tab.Screen name='Favourites' component={Favourites} />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <ThemeProvider>
+      <RootNavigation />
+    </ThemeProvider>
   );
 }

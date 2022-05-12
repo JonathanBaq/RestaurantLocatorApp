@@ -1,11 +1,15 @@
 import { child, get, push, ref, update } from "firebase/database";
 
 import { firebaseDbRef, firebaseDb } from '../Config/firebase';
+import { getAuth } from 'firebase/auth';
 
 const dbRef = firebaseDbRef;
 
 const addToFavorites = async (item) => {
-  if(!item) {
+  const auth = getAuth();
+  const currentUser = auth.currentUser;
+
+  if (!item) {
     console.error('Item data missing!');
   } else {
     const favoriteData = {
@@ -14,7 +18,7 @@ const addToFavorites = async (item) => {
       priceLevel: item.priceLevel,
       rating: item.rating,
     };
-    const favoriteDbRef = ref(firebaseDb, `favorites/testUser`);
+    const favoriteDbRef = ref(firebaseDb, `favorites/${currentUser.uid}`);
     const newFavoriteRef = push(favoriteDbRef);
     try {
       await update(newFavoriteRef, favoriteData);
@@ -26,7 +30,7 @@ const addToFavorites = async (item) => {
 }
 
 const snapshotToArray = (snapshot) => {
-  if(!snapshot) {
+  if (!snapshot) {
     console.error('Snapshot missing!');
   } else {
     let returnArr = [];
@@ -37,19 +41,6 @@ const snapshotToArray = (snapshot) => {
     })
     return returnArr;
   }
-}
-
-const getUsers = async () => {
- const snapshot = await get(child(dbRef, 'users/'));
- try {
-  if (snapshot.exists()) {
-    console.log(snapshot.val());
-  } else {
-    console.log("No data available");
-  }
- } catch (error) {
-  console.error(error);
- } 
 }
 
 const getFavorites = async () => {
@@ -66,4 +57,18 @@ const getFavorites = async () => {
   }
 }
 
-export default { getUsers, getFavorites, addToFavorites };
+const saveNewUser = async (user) => {
+  const newUser = {
+    email: user.user.email,
+    uid: user.user.uid,
+  };
+  const userDbRef = ref(firebaseDb, `users/${user.user.uid}`);
+  try {
+    await update(userDbRef, newUser);
+    console.log('Saved to DB successfully.');
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export default { getFavorites, addToFavorites, saveNewUser };

@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Input, Button } from '@rneui/themed';
 
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import firebaseService from '../Services/firebaseService';
 
 const auth = getAuth();
 
@@ -24,7 +25,8 @@ const SignUpScreen = ({ navigation }) => {
     }
 
     try {
-      await createUserWithEmailAndPassword(auth, value.email, value.password);
+      const user = await createUserWithEmailAndPassword(auth, value.email, value.password);
+      firebaseService.saveNewUser(user);
       navigation.navigate('Sign In');
     } catch (error) {
       setValue({
@@ -73,7 +75,7 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center', 
+    justifyContent: 'center',
   },
 
   controls: {

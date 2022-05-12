@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { ListItem } from '@rneui/themed';
 import { TouchableOpacity, StyleSheet, View, Alert } from 'react-native';
 

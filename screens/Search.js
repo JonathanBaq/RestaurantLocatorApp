@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TextInput, Button, Alert } from 'react-native';
+import { View, StyleSheet, TextInput, Alert } from 'react-native';
+import { Button } from '@rneui/themed';
 import MapView from 'react-native-maps';
 import * as Location from 'expo-location';
 
 import placesService from '../Services/placesService';
 
 export default function Search() {
-  const [location, setLocation] = useState({});
+  const [location, setLocation] = useState({
+    latitude: 60.1699,
+    longitude: 24.9384,
+    latitudeDelta: 0.015,
+    longitudeDelta: 0.015
+  });
   const [address, setAddress] = useState('');
   const [nearbyRestaurants, setNearbyRestaurants] = useState([]);
 
@@ -18,6 +24,7 @@ export default function Search() {
         return;
       }
       let currentLocation = await Location.getCurrentPositionAsync({});
+      console.log(currentLocation)
       setLocation({
         latitude: currentLocation.coords.latitude,
         longitude: currentLocation.coords.longitude
@@ -60,25 +67,23 @@ export default function Search() {
           latitude: location.latitude,
           longitude: location.longitude,
           latitudeDelta: 0.015,
-          longitudeDelta: 0.015
+          longitudeDelta: 0.015,
         }}>
-        {location
-        ? nearbyRestaurants.map((marker, index) => (
+        {nearbyRestaurants.map((marker, index) => (
           <MapView.Marker
             key={index}
             coordinate={{ latitude: marker.geometry.location.lat, longitude: marker.geometry.location.lng }}
             title={marker.name}
             description={marker.vicinity} />
-        ))
-        : <></>
-        }
+        ))}
       </MapView>
       <TextInput
         placeholder='Enter address to find nearby restuarants.'
         onChangeText={address => setAddress(address)} />
       <Button
-        title='Show'
-        onPress={findAddress} />
+        title='Search'
+        onPress={findAddress}
+        buttonStyle={styles.buttonStyle} />
     </View >
   );
 }
@@ -88,5 +93,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     marginHorizontal: 16,
+  },
+  buttonStyle: {
+    backgroundColor: '#ff724c',
   },
 })

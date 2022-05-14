@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { StyleSheet, View, TextInput, Alert, Text } from 'react-native';
 import { Button, Divider } from '@rneui/themed';
+import { useFocusEffect } from '@react-navigation/native';
 
 import placesService from '../Services/placesService';
 import firebaseService from '../Services/firebaseService';
@@ -11,19 +12,44 @@ export default function Favourites() {
   const [restaurantName, setRestaurantName] = useState('');
   const [restaurant, setRestaurant] = useState([]);
   const [resultIsVisible, setResultIsVisible] = useState(false);
+  const [favoriteIconName, setFavoriteIconName] = useState('heart-outline');
 
-  /*    useEffect(() => {
-     fetchFavorites();
-    }, []); */
+  useFocusEffect(
+    useCallback(() => {
+      fetchFavorites();
+    }, [])
+  );
 
   const fetchFavorites = () => {
     firebaseService.getFavorites()
       .then(favorites => {
-        setFavoriteList(...favoriteList, favorites);
+        setFavoriteList(favoriteList.concat(favorites));
       })
       .catch((error) => {
         console.error(error);
         Alert.alert('Error', 'Something went wrong, please try again later.');
+      })
+  }
+
+  const deleteFromFavorites = (item) => {
+    firebaseService.removeFavorite(item)
+      .then(() => setFavoriteList(favoriteList.filter(favorite => favorite.key !== item.key)))
+      .catch((error) => {
+        console.error(error);
+        Alert.alert('Error', 'Something went wrong, try again later.');
+      })
+  }
+
+  const saveToFavorites = (item) => {
+    firebaseService.addToFavorites(item)
+      .then(() => {
+        const itemArray = [{...item}]
+        setFavoriteList(favoriteList.concat(itemArray));
+        setFavoriteIconName('heart');
+      })
+      .catch((error) => {
+        console.error(error);
+        Alert.alert('Error', 'Something went wrong, try again later.');
       })
   }
 
@@ -69,21 +95,25 @@ export default function Favourites() {
           title='Search'
           onPress={showRestaurant} />
       </View>
-     {/*  <Button
-        style={{}}
-        title='Get Favorites'
-        onPress={fetchFavorites} /> */}
       {resultIsVisible
         ? <>
-          <Text style={styles.title}>Your Searches</Text>
-          <RestaurantList showFavoriteIcon={true} restaurantList={restaurant} />
-          <Divider />
+          <Text style={styles.title}>Restaurant found</Text>
+          <View style={styles.list}>
+            <RestaurantList favoriteIconName={favoriteIconName} saveToFavorites={saveToFavorites} showFavoriteIcon={true} restaurantList={restaurant} />
+          </View>
+          <Button
+            buttonStyle={styles.buttonStyle}
+            title='Clear'
+            onPress={() => setResultIsVisible(false)} />
         </>
-        : <Text></Text>}
+        : <Divider />}
       {favoriteList.length != 0
-      ? <RestaurantList showFavoriteIcon={false} restaurantList={favoriteList} />
-    : <Text style={styles.info}>No favorites yet.</Text>}
-      
+        ? <>
+          <Text style={styles.title}>Saved Favourites</Text>
+          <RestaurantList deleteFromFavorites={deleteFromFavorites} showFavoriteIcon={false} restaurantList={favoriteList} />
+        </>
+        : <Text style={styles.info}>No favorites yet.</Text>}
+
     </View >
   )
 }
@@ -109,9 +139,11 @@ const styles = StyleSheet.create({
   info: {
     alignSelf: 'center',
     color: '#fdbf50',
-    
   },
-  input:{
+  input: {
     paddingRight: 15,
+  },
+  list: {
+    height: 100,
   },
 })

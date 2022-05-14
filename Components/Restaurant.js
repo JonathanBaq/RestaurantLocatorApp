@@ -1,30 +1,17 @@
-import  { useState } from 'react';
+import React, { useState } from 'react';
 import { ListItem } from '@rneui/themed';
 import { TouchableOpacity, StyleSheet, View, Alert } from 'react-native';
-
 
 import firebaseService from '../Services/firebaseService';
 import CustomRating from './CustomRating';
 import RestaurantDialog from './RestaurantDialog';
 
 
-export default Restaurant = ({ item, showFavoriteIcon }) => {
+export default Restaurant = ({ item, showFavoriteIcon, deleteFromFavorites, favoriteIconName, saveToFavorites}) => {
   const [restaurantDialogVisible, setRestaurantDialogVisible] = useState(false);
-  const [favoriteIconName, setFavoriteIconName] = useState('heart-outline');
-
+  
   const toggleDialog = () => {
     setRestaurantDialogVisible(!restaurantDialogVisible);
-  }
-
-  const saveToFavorites = () => {
-    firebaseService.addToFavorites(item)
-      .then(() => {
-        setFavoriteIconName('heart');
-      })
-      .catch((error) => {
-        console.error(error);
-        Alert.alert('Error', 'Something went wrong, try again later.');
-      })
   }
 
   return (
@@ -38,13 +25,14 @@ export default Restaurant = ({ item, showFavoriteIcon }) => {
           <ListItem.Chevron color="black" onPress={toggleDialog} />
         </ListItem>
       </TouchableOpacity>
-      <RestaurantDialog 
+      <RestaurantDialog
         item={item}
-        saveToFavorites={saveToFavorites}
-        favoriteIconName={favoriteIconName}
+        deleteFromFavorites={deleteFromFavorites}
         toggleDialog={toggleDialog}
         restaurantDialogVisible={restaurantDialogVisible}
         showFavoriteIcon={showFavoriteIcon}
+        favoriteIconName={favoriteIconName}
+        saveToFavorites={saveToFavorites}
       />
     </View>
   )

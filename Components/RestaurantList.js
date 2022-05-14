@@ -3,7 +3,7 @@ import { FlatList, StyleSheet, View } from 'react-native';
 
 import Restaurant from './Restaurant';
 
-export default function RestaurantList({ restaurantList, showFavoriteIcon }) {
+export default function RestaurantList({ restaurantList, showFavoriteIcon, deleteFromFavorites, favoriteIconName, saveToFavorites }) {
   const [selectedId, setSelectedId] = useState(null);
 
   const renderItem = ({ item }) => {
@@ -13,6 +13,9 @@ export default function RestaurantList({ restaurantList, showFavoriteIcon }) {
           showFavoriteIcon={showFavoriteIcon}
           item={item}
           onPress={() => setSelectedId(item.name)}
+          deleteFromFavorites={deleteFromFavorites}
+          favoriteIconName={favoriteIconName}
+          saveToFavorites={saveToFavorites}
         />
       </View>
     );

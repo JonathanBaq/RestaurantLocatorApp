@@ -1,9 +1,7 @@
-import { child, get, push, ref, update } from "firebase/database";
+import { child, get, push, ref, remove, update } from "firebase/database";
 
 import { firebaseDbRef, firebaseDb } from '../Config/firebase';
 import { getAuth } from 'firebase/auth';
-
-const dbRef = firebaseDbRef;
 
 const addToFavorites = async (item) => {
   const auth = getAuth();
@@ -13,10 +11,10 @@ const addToFavorites = async (item) => {
     console.error('Item data missing!');
   } else {
     const favoriteData = {
-      address: item.address,
+      address: item.address ? item.address : 'not provided',
       name: item.name,
-      priceLevel: item.priceLevel,
-      rating: item.rating,
+      priceLevel: item.priceLevel ? item.priceLevel : 0,
+      rating: item.rating ? item.rating : 0,
     };
     const favoriteDbRef = ref(firebaseDb, `favorites/${currentUser.uid}`);
     const newFavoriteRef = push(favoriteDbRef);
@@ -29,22 +27,42 @@ const addToFavorites = async (item) => {
   }
 }
 
-const snapshotToArray = (snapshot) => {
-  if (!snapshot) {
-    console.error('Snapshot missing!');
+const removeFavorite = async (item) => {
+  const auth = getAuth();
+  const currentUser = auth.currentUser;
+
+  if (!item) {
+    console.error('Item data missing!');
   } else {
-    let returnArr = [];
-    snapshot.forEach((childSnapshot) => {
-      const item = childSnapshot.val();
-      item.key = childSnapshot.key;
-      returnArr.push(item);
-    })
-    return returnArr;
+    const favoriteDbRef = ref(firebaseDb, `favorites/${currentUser.uid}/${item.key}`);
+    try {
+      await remove(favoriteDbRef);
+      console.log('Removed from DB successfully.');
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
 
 const getFavorites = async () => {
-  const snapshot = await get(child(dbRef, 'favorites/testUser'));
+  const auth = getAuth();
+  const currentUser = auth.currentUser;
+  const snapshot = await get(child(firebaseDbRef, `favorites/${currentUser.uid}`));
+
+  const snapshotToArray = (snapshot) => {
+    if (!snapshot) {
+      console.error('Snapshot missing!');
+    } else {
+      let returnArr = [];
+      snapshot.forEach((childSnapshot) => {
+        const item = childSnapshot.val();
+        item.key = childSnapshot.key;
+        returnArr.push(item);
+      })
+      return returnArr;
+    }
+  }
+
   try {
     if (snapshot.exists()) {
       const data = snapshotToArray(snapshot);
@@ -71,4 +89,9 @@ const saveNewUser = async (user) => {
   }
 }
 
-export default { getFavorites, addToFavorites, saveNewUser };
+export default {
+  getFavorites,
+  addToFavorites,
+  saveNewUser,
+  removeFavorite
+};

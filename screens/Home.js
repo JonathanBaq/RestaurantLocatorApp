@@ -6,6 +6,7 @@ import { DialogActions } from '@rneui/base/dist/Dialog/Dialog.Actions';
 import { getAuth, signOut } from 'firebase/auth';
 
 import placesService from '../Services/placesService';
+import firebaseService from '../Services/firebaseService';
 import RestaurantList from '../Components/RestaurantList';
 import { useAuthentication } from '../Services/authenticationService';
 
@@ -77,6 +78,7 @@ export default function Home() {
 
   ]);
   const [coordinates, setCoordinates] = useState({});
+  const [favoriteIconName, setFavoriteIconName] = useState('heart-outline');
 
   const { user } = useAuthentication();
   const auth = getAuth();
@@ -90,6 +92,17 @@ export default function Home() {
   useEffect(() => {
     showNearbyRestaurants(coordinates);
   }, [coordinates]) */
+
+  const saveToFavorites = (item) => {
+    firebaseService.addToFavorites(item)
+      .then(() => {
+        setFavoriteIconName('heart');
+      })
+      .catch((error) => {
+        console.error(error);
+        Alert.alert('Error', 'Something went wrong, try again later.');
+      }) 
+  }
 
   const toggleDialog = () => {
     setLocationDialogVisible(!locationDialogVisible);
@@ -151,12 +164,12 @@ export default function Home() {
 
       </View>
       <Divider />
-      <RestaurantList showFavoriteIcon={true} restaurantList={nearbyRestaurants} />
+      <RestaurantList saveToFavorites={saveToFavorites} favoriteIconName={favoriteIconName} showFavoriteIcon={true} restaurantList={nearbyRestaurants} />
       <Dialog
         isVisible={locationDialogVisible}
         onBackdropPress={toggleDialog} >
         <Dialog.Title
-          title='Welcome to EatwithMe!'
+          title='Welcome!'
           titleStyle={styles.dialogText} />
         <Input
           label='Start by entering your location'

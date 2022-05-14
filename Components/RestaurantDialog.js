@@ -5,8 +5,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import CustomRating from './CustomRating';
 
 export default RestaurantDialog = (
-  { item, saveToFavorites, favoriteIconName,
-    toggleDialog, restaurantDialogVisible, showFavoriteIcon }) => {
+  { item, deleteFromFavorites, toggleDialog, restaurantDialogVisible, showFavoriteIcon, favoriteIconName, saveToFavorites }) => {
+
 
   let priceDesc;
   let priceStyle = styles.itemStyle;
@@ -16,11 +16,13 @@ export default RestaurantDialog = (
   } else if (item.priceLevel > 3) {
     priceDesc = 'Pricey'
     priceStyle = { ...priceStyle, color: '#ff724c', };
+  } else if (!item.priceLevel) {
+    priceDesc = 'Not specified.'
+    priceStyle = { ...priceStyle, color: 'black', };
   } else {
     priceDesc = 'Affordable'
     priceStyle = { ...priceStyle, color: 'green', };
   }
-
 
   return (
     <View>
@@ -37,14 +39,19 @@ export default RestaurantDialog = (
         <Text
           style={styles.link}
           onPress={() => Linking.openURL(item.website)}>{item.website}</Text>
-        {showFavoriteIcon 
+        {showFavoriteIcon
           ? <MaterialCommunityIcons
-            onPress={saveToFavorites}
+            onPress={() => saveToFavorites(item)}
             style={styles.iconStyle}
             name={favoriteIconName}
             size={30}
             color='#ff724c' />
-          : <Text></Text>}
+          : <MaterialCommunityIcons
+            onPress={() => deleteFromFavorites(item)}
+            style={styles.iconStyle}
+            name="delete"
+            size={30}
+            color='#ff724c' />}
       </Dialog>
     </View>
   )

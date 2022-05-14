@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, Alert } from 'react-native';
 import { Dialog, Input, Button, Divider } from '@rneui/themed';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -11,79 +11,16 @@ import RestaurantList from '../Components/RestaurantList';
 import { useAuthentication } from '../Services/authenticationService';
 
 export default function Home() {
-  const [location, setLocation] = useState('kallio');
+  const [location, setLocation] = useState('');
   const [locationDialogVisible, setLocationDialogVisible] = useState(false);
-  const [nearbyRestaurants, setNearbyRestaurants] = useState([
-
-    {
-      "address": "Hämeentie 2, Helsinki",
-      "name": "Kallion Sävel",
-      "priceLevel": 2,
-      "rating": 4,
-    },
-    {
-      "address": "Siltasaarenkatu 3, Helsinki",
-      "name": "Restaurant Himshikhar",
-      "priceLevel": 2,
-      "rating": 4.2,
-    },
-    {
-      "address": "Porthaninkatu 5 A 3, Helsinki",
-      "name": "Restaurant Oiva",
-      "priceLevel": 2,
-      "rating": 4,
-    },
-    {
-      "address": "Säästöpankinranta 6, Helsinki",
-      "name": "Juttutupa",
-      "priceLevel": 2,
-      "rating": 4.1,
-    },
-    {
-      "address": "Siltasaarenkatu 12, Helsinki",
-      "name": "McDonald's",
-      "priceLevel": 1,
-      "rating": 3.5,
-    },
-    {
-      "address": "John Stenbergin ranta 2, Helsinki",
-      "name": "Food & Co John S",
-      "priceLevel": 1,
-      "rating": 4.4,
-    },
-    {
-      "address": "Hämeentie 2, Helsinki",
-      "name": "Hesburger Hakaniemi",
-      "priceLevel": 2,
-      "rating": 3.8,
-    },
-    {
-      "address": "Siltasaarenkatu 11, Helsinki",
-      "name": "Da Vinci Bar & Ristorante",
-      "priceLevel": 2,
-      "rating": 4,
-    },
-    {
-      "address": "Siltasaarenkatu 11, Helsinki",
-      "name": "Chilli Hakaniemi",
-      "priceLevel": 1,
-      "rating": 3.6,
-    },
-    {
-      "address": "Toinen linja 3, Helsinki",
-      "name": "Silvoplee",
-      "priceLevel": 2,
-      "rating": 4.4,
-    },
-
-  ]);
+  const [nearbyRestaurants, setNearbyRestaurants] = useState([]);
   const [coordinates, setCoordinates] = useState({});
   const [favoriteIconName, setFavoriteIconName] = useState('heart-outline');
 
   const { user } = useAuthentication();
   const auth = getAuth();
 
-  /* useEffect(() => {
+  useEffect(() => {
     if (!location) {
       toggleDialog();
     }
@@ -91,7 +28,7 @@ export default function Home() {
 
   useEffect(() => {
     showNearbyRestaurants(coordinates);
-  }, [coordinates]) */
+  }, [coordinates])
 
   const saveToFavorites = (item) => {
     firebaseService.addToFavorites(item)
@@ -101,7 +38,7 @@ export default function Home() {
       .catch((error) => {
         console.error(error);
         Alert.alert('Error', 'Something went wrong, try again later.');
-      }) 
+      })
   }
 
   const toggleDialog = () => {
@@ -138,7 +75,7 @@ export default function Home() {
           priceLevel: resto.price_level,
           address: resto.vicinity,
         }))
-        setNearbyRestaurants(...nearbyRestaurants, formatted);
+        setNearbyRestaurants(formatted);
       })
       .catch(error => {
         console.error(error);
@@ -164,10 +101,11 @@ export default function Home() {
 
       </View>
       <Divider />
-      <RestaurantList saveToFavorites={saveToFavorites} favoriteIconName={favoriteIconName} showFavoriteIcon={true} restaurantList={nearbyRestaurants} />
+      {nearbyRestaurants.length !== 0
+        ? <RestaurantList saveToFavorites={saveToFavorites} favoriteIconName={favoriteIconName} showFavoriteIcon={true} restaurantList={nearbyRestaurants} />
+        : <></>}
       <Dialog
-        isVisible={locationDialogVisible}
-        onBackdropPress={toggleDialog} >
+        isVisible={locationDialogVisible} >
         <Dialog.Title
           title='Welcome!'
           titleStyle={styles.dialogText} />

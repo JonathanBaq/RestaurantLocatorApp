@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { useAuthentication } from '../Services/authenticationService';
 import UserTab from './userTab';
 import AuthStack from './authStack';

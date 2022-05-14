@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { StyleSheet, View, TextInput, Alert, Text } from 'react-native';
 import { Button, Divider } from '@rneui/themed';
 import { useFocusEffect } from '@react-navigation/native';
@@ -23,7 +23,9 @@ export default function Favourites() {
   const fetchFavorites = () => {
     firebaseService.getFavorites()
       .then(favorites => {
-        setFavoriteList(favoriteList.concat(favorites));
+        if(favorites) {
+          setFavoriteList(favoriteList.concat(favorites));
+        }
       })
       .catch((error) => {
         console.error(error);
@@ -43,7 +45,7 @@ export default function Favourites() {
   const saveToFavorites = (item) => {
     firebaseService.addToFavorites(item)
       .then(() => {
-        const itemArray = [{...item}]
+        const itemArray = [{ ...item }]
         setFavoriteList(favoriteList.concat(itemArray));
         setFavoriteIconName('heart');
       })
@@ -107,7 +109,7 @@ export default function Favourites() {
             onPress={() => setResultIsVisible(false)} />
         </>
         : <Divider />}
-      {favoriteList.length != 0
+      {favoriteList.length !== 0
         ? <>
           <Text style={styles.title}>Saved Favourites</Text>
           <RestaurantList deleteFromFavorites={deleteFromFavorites} showFavoriteIcon={false} restaurantList={favoriteList} />

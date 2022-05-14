@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { View, StyleSheet, TextInput, Alert } from 'react-native';
 import { Button } from '@rneui/themed';
 import MapView from 'react-native-maps';

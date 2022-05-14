@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ListItem } from '@rneui/themed';
-import { TouchableOpacity, StyleSheet, View, Alert } from 'react-native';
+import { TouchableOpacity, StyleSheet, View } from 'react-native';
 
-import firebaseService from '../Services/firebaseService';
 import CustomRating from './CustomRating';
 import RestaurantDialog from './RestaurantDialog';
 

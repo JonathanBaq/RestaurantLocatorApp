@@ -1,4 +1,3 @@
-import React from 'react';
 import './Config/firebase';
 import 'react-native-gesture-handler';
 
